@@ -1,4 +1,5 @@
 # Ember-Kernel
+A new kernel for PyroOS.
 
 ## About
 The Ember Kernel is a replacement kernel for the Pyro Operating System (http://pyro-os.org/). It is meant to be completely compatible with the Pyro OS system call interface, while supassing the original kernel in features and performance. The original kernel was inheritted from Syllable, which modified the kernel that it inheritted from AtheOS.
