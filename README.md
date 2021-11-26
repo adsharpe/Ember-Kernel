@@ -8,6 +8,7 @@ The Ember Kernel is a replacement kernel for the [Pyro Operating System](http://
 * Grub2 booting
 * X86_64 - fully 64-bit, with no 32-bit support
 * Excecutable space protection - NX bit
+* 64-bit ELF loader
 * Atomic primitives
 * Synchonization primatives
 * Memory protection
