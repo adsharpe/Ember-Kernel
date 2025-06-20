@@ -1,28 +1,42 @@
-.global kmain                        # Declare kmain as global to avoid linker errors
+.global kmain
+.global _kstart
+
 .section .multiboot_header
-.align 4
+.align 8
 
-# Multiboot header
-.set MAGIC, 0x1BADB002               # Multiboot magic number
-.set FLAGS, 0x00000003               # Flags: multiboot + page alignment + ELF info
-.set CHECKSUM, -(MAGIC + FLAGS)      # Checksum: magic + flags + checksum = 0
+# Multiboot2 header fields
 
-.long MAGIC                          # Multiboot magic number
-.long FLAGS                          # Flags
-.long CHECKSUM                       # Checksum
+.set MB2_MAGIC, 0xE85250D6       # Multiboot2 magic
+.set MB2_ARCH, 0                 # Architecture (0 = i386)
+.set MB2_HEADER_LEN, 24          # Length of header including tags
+.set MB2_CHECKSUM, (0x100000000 - (MB2_MAGIC + MB2_ARCH + MB2_HEADER_LEN)) & 0xFFFFFFFF
 
-# ELF header information (GRUB2 will use this)
-.long 0                              # Header address (not required for basic ELF)
-.long 0                              # Load address (not required for basic ELF)
-.long 0                              # Load end address (not required for basic ELF)
-.long 0                              # BSS end address (not required for basic ELF)
-.long _kstart                        # Entry point (GRUB2 will use this)
+# Start of header
+.long MB2_MAGIC                  # magic
+.long MB2_ARCH                  # architecture
+.long MB2_HEADER_LEN            # header length (bytes)
+.long MB2_CHECKSUM              # checksum
+
+# Tag: Align modules on page boundaries (type 1, size 8)
+.long 1                        # tag type = ALIGN MODULES
+.long 8                        # tag size
+
+# Tag: Entry point (type 9, size 16)
+.long 9                        # tag type = ENTRY ADDRESS
+.long 16                       # tag size
+.quad _kstart                  # entry point address (64-bit)
+
+# Tag: End tag (type 0, size 8)
+.long 0                        # end tag type
+.long 8                        # end tag size
 
 .section .text
-.global _kstart
+.align 16
 _kstart:
-    cli                              # Disable interrupts
-    call kmain                       # Call the kernel's main function
-    hlt                              # Halt the CPU if kmain() returns
+    cli
+    call kmain
+1:
+    hlt
+    jmp 1b
 
 .section .bss
