@@ -8,6 +8,7 @@ ARCH_X86_64 = 1
 ifdef ARCH_X86_64
 	ARCH_DIR = arch/x86_64
 	TARGET = x86_64-pc-none-elf
+	ARCH_OBJS   := boot.o
 endif
 
 # Compiler flags
@@ -24,13 +25,12 @@ BUILD_KERNEL_DIR := $(BUILD_DIR)/system/kernel
 # Obj targets
 VPATH = ./ $(ARCH_DIR)
 
-BOOT_OBJS   := boot.o
 KERNEL_OBJS	:= kmain.o
 
 KERNEL      := ember.elf
 OBJ_DIR     := objs
 
-OBJS		:= $(BOOT_OBJS) $(KERNEL_OBJS)
+OBJS		:= $(ARCH_OBJS) $(KERNEL_OBJS)
 OBJS		:= $(addprefix $(OBJ_DIR)/,$(OBJS))
 
 # Toolchain (LLVM)
