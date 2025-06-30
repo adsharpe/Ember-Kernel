@@ -1,6 +1,7 @@
+#include <stdint.h>
+#include "boot/multiboot2.h"
 
-
-extern "C" int kmain()
+extern "C" int kmain(uint64_t mb_info_addr, uint64_t magic)
 {
 	const unsigned int VID_MEM_START = 0xB8000;
 	volatile unsigned char *pScreen = (volatile unsigned char *)VID_MEM_START;

@@ -32,14 +32,17 @@
 .align 16
 _kstart:
     cli
+    mov ebx, multiboot_info_backup
+    mov eax, multiboot_magic_backup
+
     call setup_page_tables
     call setup_long_mode
 
     # We never return here — control jumps to long_mode_start
 
-1:
+halt:
     hlt
-    jmp 1b
+    jmp halt
 
 setup_page_tables:
     # Set up pd_table[0] = 0x000000 | 0x83 (2MB page, RW, Present, PS)
@@ -103,6 +106,10 @@ long_mode_start:
     mov gs, ax
 
     lea rsp, [stack_top]
+
+    mov multiboot_info_backup, rdi
+    mov multiboot_magic_backup, rsi
+
     call kmain
 
 .halt:
@@ -112,6 +119,12 @@ long_mode_start:
 # GDT
 .section .data
 .align 8
+multiboot_info_backup:
+    .quad 0
+multiboot_magic_backup:
+    .quad 0
+
+.section .rodata
 gdt:
     .quad 0                          # Null
     .quad 0x00AF9A000000FFFF         # Code: 0x08
