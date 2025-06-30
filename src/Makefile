@@ -23,14 +23,16 @@ BUILD_BOOT_DIR   := $(BUILD_DIR)/boot/grub
 BUILD_KERNEL_DIR := $(BUILD_DIR)/system/kernel
 
 # Obj targets
-VPATH = ./ $(ARCH_DIR)
+VPATH = ./ $(ARCH_DIR) console libkcpp_support
 
-KERNEL_OBJS	:= kmain.o
+KERNEL_OBJS	:= kmain.o framebuffer.o console.o
+
+KCPP_SUPPORT_OBJS := kernel_cpp_runtime.o kernel_cpp_guard.o kernel_cpp_stubs.o
 
 KERNEL      := ember.elf
 OBJ_DIR     := objs
 
-OBJS		:= $(ARCH_OBJS) $(KERNEL_OBJS)
+OBJS		:= $(ARCH_OBJS) $(KERNEL_OBJS) $(KCPP_SUPPORT_OBJS)
 OBJS		:= $(addprefix $(OBJ_DIR)/,$(OBJS))
 
 # Toolchain (LLVM)
